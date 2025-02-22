@@ -18,10 +18,8 @@ DB_USER=${POSTGRES_USER:=postgres}
 DB_PASSWORD="${POSTGRES_PASSWORD:=secret}"
 DB_NAME="${POSTGRES_DB:=newsletter}"
 DB_PORT="${POSTGRES_PORT:=5433}"
-APP_USER="${APP_USER:=app}"
 if [[ -z "${SKIP_DOCKER}" ]]
 then
-  # if a postgres container is running, print instructions to kill it and exit
   RUNNING_POSTGRES_CONTAINER=$(docker ps --filter 'name=postgres' --format '{{.ID}}')
   if [[ -n $RUNNING_POSTGRES_CONTAINER ]]; then
     echo >&2 "there is a postgres container already running, kill it with"
@@ -29,7 +27,6 @@ then
     exit 1
   fi
   CONTAINER_NAME="postgres_$(date '+%s')"
-  # Launch postgres using Docker
   docker run \
       --env POSTGRES_USER="${DB_USER}" \
       --env POSTGRES_PASSWORD="${DB_PASSWORD}" \
@@ -41,7 +38,6 @@ then
       --detach \
       --name "${CONTAINER_NAME}" \
       postgres -N 1000
-      # ^ Increased maximum number of connections for testing purposes
       
   until [ \
     "$(docker inspect -f "{{.State.Health.Status}}" "${CONTAINER_NAME}")" == \
@@ -50,14 +46,6 @@ then
     >&2 echo "Postgres is still unavailable - sleeping"
     sleep 1 
   done
-  
-  # Create the application user
-  CREATE_QUERY="CREATE USER ${APP_USER} WITH PASSWORD '${DB_PASSWORD}';"
-  docker exec -it "${CONTAINER_NAME}" psql -U "${DB_USER}" -c "${CREATE_QUERY}"
-  
-  # Grant create db privileges to the app user
-  GRANT_QUERY="ALTER USER ${APP_USER} CREATEDB;"
-  docker exec -it "${CONTAINER_NAME}" psql -U "${DB_USER}" -c "${GRANT_QUERY}"
 fi
 
 # Keep pinging Postgres until it's ready to accept commands
