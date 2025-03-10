@@ -23,7 +23,7 @@ jobs:
           POSTGRES_PASSWORD: password
           POSTGRES_DB: postgres
         ports:
-          - 5432:5432
+          - 5433:5432
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
@@ -84,7 +84,7 @@ jobs:
           POSTGRES_PASSWORD: secret
           POSTGRES_DB: postgres
         ports:
-          - 5432:5432
+          - 5433:5432
     steps:
       - uses: actions/checkout@v4
       - name: Install the Rust toolchain
