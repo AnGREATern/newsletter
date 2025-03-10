@@ -10,14 +10,6 @@ env:
   SQLX_VERSION: 0.8.0
   SQLX_FEATURES: "rustls,postgres"
   APP_DB_NAME: newsletter
-  PGPORT: 5433
-  PGUSER: postgres
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: password
-  PGPASSWORD: password
-  POSTGRES_DB: postgres
-  PGDATABASE: postgres
-  DATABASE_URL: "postgres://${PGUSER}:${PGPASSWORD}@localhost:${PGPORT}/${PGDATABASE}"
 
 jobs:
   test:
@@ -26,6 +18,15 @@ jobs:
     services:
       postgres:
         image: postgres:14
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: postgres
+          PGPORT: 5433
+          PGUSER: postgres
+          PGPASSWORD: password
+          PGDATABASE: newsletter
+          DATABASE_URL: "postgres://${PGUSER}:${PGPASSWORD}@localhost:${PGPORT}/${PGDATABASE}"
         ports:
           - 5433:5432
     steps:
@@ -83,6 +84,15 @@ jobs:
     services:
       postgres:
         image: postgres:14
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: postgres
+          PGPORT: 5433
+          PGUSER: postgres
+          PGPASSWORD: password
+          PGDATABASE: newsletter
+          DATABASE_URL: "postgres://${PGUSER}:${PGPASSWORD}@localhost:${PGPORT}/${PGDATABASE}"
         ports:
           - 5433:5432
     steps:
